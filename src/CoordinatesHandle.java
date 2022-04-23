@@ -1,5 +1,3 @@
-import java.text.DecimalFormat;
-
 public class CoordinatesHandle {
     private static final CoordinatesHandle ch = new CoordinatesHandle();
     
@@ -30,7 +28,7 @@ public class CoordinatesHandle {
         // angular distance in radians
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-        return Double.valueOf(new DecimalFormat("#.##").format(earthRadius * c));
+        return (earthRadius * c);
     }
 
 }

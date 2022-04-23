@@ -1,0 +1,5 @@
+City,Country,Latitude,Longitude
+New York, USA, 40.7128 N,74.0060 W
+Seoul, South Korea, 37.5665 N,126.9780 E
+Valletta, Malta, 35.8989 N,14.5146 E 
+Bora Bora, French Polynesia, 16.5004 S , 151.7415 W

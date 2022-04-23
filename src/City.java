@@ -26,9 +26,6 @@ public class City {
             return value;
         }
     }
-    public void setlatitude(String d) {
-        this.latitude = d;
-    }
 
     public double getLongitude() { 
         String[] longitude = this.longitude.split(" ");
@@ -42,17 +39,7 @@ public class City {
             return value;
         }
     }
-    public void setLongitude(String d) {
-        this.longitude = d;
-    }
  
-    public City(){
-        cityName = ""; 
-        countryName = ""; 
-        latitude = ""; 
-        longitude = "";
-    }
-
     public City(String city, String country, String lat, String lon){
         cityName = city; 
         countryName = country; 

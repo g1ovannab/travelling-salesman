@@ -4,17 +4,24 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class App {
 
     public static ArrayList<City> cities;
     public static double[][] graph;
+    public static Pattern regexCities;
     
     public static void main(String[] args) throws IOException,FileNotFoundException  {
 
         cities = new ArrayList<City>();
+        regexCities = Pattern.compile("(?<cityName>[\\w\\s]*)\\s*,\\s*(?<countryName>[\\w\\s]*)\\s*,\\s*(?<latitude>[\\d]*.[\\d]*\\s\\w)\\s*,\\s*(?<longitude>[\\d]*.[\\d]*\\s\\w)\\s*\\n*", Pattern.CASE_INSENSITIVE);
 
-        File citiesFile = new File("files/cities.txt");
+        File citiesFile = new File("files/citiesTest.txt");
 
         FileReader fr = new FileReader(citiesFile);
         BufferedReader br = new BufferedReader(fr);
@@ -26,14 +33,14 @@ public class App {
 
         while (line != null){
             
-            String[] values = line.split(",");
-
-            if (values.length != 4 & values.length > 0){
-                System.out.println("Not able to register city " + values[0]);
+            Matcher m = regexCities.matcher(line);
+            if (m.matches()){
+                cities.add(new City(m.group("cityName"), m.group("countryName"), m.group("latitude"), m.group("longitude")));
             } else {
-                cities.add(new City(values[0], values[1], values[2], values[3]));
+                String[] values = line.split(",");
+                System.out.println("Not able to register city " + values[0]);
             }
-
+        
             line = br.readLine();
         }
 
@@ -74,15 +81,43 @@ public class App {
     }
 
     public static void CalculateShortestDistance(){
-        // int[] shortestDistance = new int[cities.size()];
+        int[] shortestDistance = new int[cities.size()];
 
-        // shortestDistance = GetShortestByBruteForce();
+        shortestDistance = GetShortestByBruteForce();
         // shortestDistance = GetShortestByDynamicProgramming();
 
         // shortestDistance = GetShortestByDivideAndConquer(); 
         // or
         // shortestDistance = GetShortestByGuloso(); 
 
+    }
+
+    public static int[] GetShortestByBruteForce(){
+        int[] shortestDistance = new int[cities.size()];
+
+        List<Integer> a = new ArrayList<Integer>();
+
+        a.add(1);
+        a.add(2);
+        a.add(3);
+        a.add(4);
+        
+
+        permute(a,0);
+
+
+        return shortestDistance;
+    }   
+
+    static void permute(List<Integer> arr, int k){
+        for(int i = k; i < arr.size(); i++){
+            Collections.swap(arr, i, k);
+            permute(arr, k+1);
+            Collections.swap(arr, k, i);
+        }
+        if (k == arr.size() -1){
+            System.out.println(Arrays.toString(arr.toArray()));
+        }
     }
 
 }
