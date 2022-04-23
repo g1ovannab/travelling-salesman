@@ -23,8 +23,11 @@ public class CoordinatesHandle {
         latitudeFrom = Math.toRadians(latitudeFrom);
         latitudeTo = Math.toRadians(latitudeTo);
 
+        // square of half the chord length between the points
         double a = Math.sin(distanceLatitude/2) * Math.sin(distanceLatitude/2) + 
-                   Math.sin(distanceLongitude/2) * Math.sin(distanceLongitude/2) * Math.cos(latitudeFrom) * Math.cos(latitudeTo);
+        Math.sin(distanceLongitude/2) * Math.sin(distanceLongitude/2) * Math.cos(latitudeFrom) * Math.cos(latitudeTo);
+        
+        // angular distance in radians
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
         return Double.valueOf(new DecimalFormat("#.##").format(earthRadius * c));

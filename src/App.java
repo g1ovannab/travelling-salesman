@@ -31,8 +31,7 @@ public class App {
             if (values.length != 4 & values.length > 0){
                 System.out.println("Not able to register city " + values[0]);
             } else {
-                City city = new City(values[0], values[1], values[2], values[3]);
-                cities.add(city);
+                cities.add(new City(values[0], values[1], values[2], values[3]));
             }
 
             line = br.readLine();
@@ -40,22 +39,9 @@ public class App {
 
         br.close();
 
-
-        // fazer lista com 0 - seoul; 1 - tokyo, etcetcetc (já existe)
-        // fazer matriz de adjacencia
-
         graph = GetAdjacencyMatrix();
         
-        
-        // força bruta
-        // programação dinâmica
-        // divisão e conquista ou guloso
-
-
-        // GetCities()
-        // GenerateGraph
-        // CalculateDistances
-        // ShowShortestDistance
+        CalculateShortestDistance();
 
     }
 
@@ -85,6 +71,18 @@ public class App {
         }
 
         return matrix;
+    }
+
+    public static void CalculateShortestDistance(){
+        // int[] shortestDistance = new int[cities.size()];
+
+        // shortestDistance = GetShortestByBruteForce();
+        // shortestDistance = GetShortestByDynamicProgramming();
+
+        // shortestDistance = GetShortestByDivideAndConquer(); 
+        // or
+        // shortestDistance = GetShortestByGuloso(); 
+
     }
 
 }
