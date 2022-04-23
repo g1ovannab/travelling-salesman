@@ -31,4 +31,26 @@ public class CoordinatesHandle {
         return (earthRadius * c);
     }
 
+    public static double GetDistanceBetweenPermutation(int[] permutation, double[][] graph){
+        int startCity = permutation[0];
+
+        double distance = 0;
+
+        int fromID, toID;
+        for (int i = 0; i < permutation.length; i++){
+
+            fromID = permutation[i];
+            if (i == permutation.length - 1){
+                toID = startCity;
+            } else {
+                toID = permutation[i + 1];
+            }
+
+            distance += graph[fromID][toID];
+
+        }
+
+        return distance;
+    }
+
 }

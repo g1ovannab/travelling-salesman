@@ -1,9 +1,12 @@
 public class City {
-    public String cityName; 
-    public String countryName; 
-    public String latitude; 
-    public String longitude;
+    private int id;
+    private String cityName; 
+    private String countryName; 
+    private String latitude; 
+    private String longitude;
     
+    public int getId() { return id; }
+
     public String getCityName() { return cityName; }
     public void setCityName(String cn) {
         this.cityName = cn;
@@ -40,7 +43,8 @@ public class City {
         }
     }
  
-    public City(String city, String country, String lat, String lon){
+    public City(int i, String city, String country, String lat, String lon){
+        id = i;
         cityName = city; 
         countryName = country; 
         latitude = lat; 
