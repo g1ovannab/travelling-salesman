@@ -17,6 +17,12 @@ public class City {
         this.countryName = cn;
     }
 
+    /**
+     * Get the "raw" value from the latitude. If the latitude is positioned in the South, the value 
+     * (which we use to calculate distances) needs to be negative.
+     * 
+     * @returns The value from the latitude.
+     */
     public double getLatitude() { 
         String[] latitude = this.latitude.split(" ");
 
@@ -30,6 +36,12 @@ public class City {
         }
     }
 
+    /**
+     * Get the "raw" value from the longitude. If the longitude is positioned in the West, the value 
+     * (which we use to calculate distances) needs to be negative.
+     * 
+     * @returns The value from the longitude.
+     */
     public double getLongitude() { 
         String[] longitude = this.longitude.split(" ");
 

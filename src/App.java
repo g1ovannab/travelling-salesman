@@ -1,11 +1,12 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,48 +20,69 @@ public class App {
     public static Pattern regexCities;
 
     public static List<int[]> permutations;
+    public static Map<int[],Double> Paths;
+
+    public enum Methods{
+        BruteForce, DynamicProgramming, DivideAndConquer
+    }
     
     public static void main(String[] args) throws IOException,FileNotFoundException  {
 
-        permutations = new ArrayList<int[]>();
-        cities = new ArrayList<City>();
-        regexCities = Pattern.compile("(?<cityName>[\\w\\s]*)\\s*,\\s*(?<countryName>[\\w\\s]*)\\s*,\\s*(?<latitude>[\\d]*.[\\d]*\\s\\w)\\s*,\\s*(?<longitude>[\\d]*.[\\d]*\\s\\w)\\s*\\n*", Pattern.CASE_INSENSITIVE);
-
-        File citiesFile = new File("files/citiesTest.txt");
-
-        FileReader fr = new FileReader(citiesFile);
-        BufferedReader br = new BufferedReader(fr);
-
-        //Read header
-        String line = br.readLine();
-        // Read first value
-        line = br.readLine();
-
-        int id = 0;
-        while (line != null){
+        try {
+            StartApplication();
             
-            Matcher m = regexCities.matcher(line);
-            if (m.matches()){
-                cities.add(new City(id, m.group("cityName"), m.group("countryName"), m.group("latitude"), m.group("longitude")));
-            } else {
-                String[] values = line.split(",");
-                System.out.println("Not able to register city " + values[0]);
-            }
-        
+            File citiesFile = new File("files/citiesTest2.txt");
+
+            FileReader fr = new FileReader(citiesFile);
+            BufferedReader br = new BufferedReader(fr);
+
+            //Read header;
+            String line = br.readLine();
+            // Read first value;
             line = br.readLine();
-            id++;
-        }
 
-        br.close();
+            int id = 0;
+            while (line != null){
+                Matcher m = regexCities.matcher(line);
 
-        graph = GetAdjacencyMatrix();
+                if (m.matches()){
+                    cities.add(new City(id, m.group("cityName"), m.group("countryName"), m.group("latitude"), m.group("longitude")));
+                } else {
+                    String[] values = line.split(",");
+                    System.out.println("Not able to register city " + values[0]);
+                }
+            
+                line = br.readLine();
+                id++;
+            }
+
+            br.close();
+
+            graph = GetAdjacencyMatrix();
         
-        CalculateShortestDistance();
+            CalculateShortestPath();
+
+        } catch (Exception e) {
+            File citiesFile = new File("error.txt");
+
+            FileWriter fr = new FileWriter(citiesFile);
+            BufferedWriter bw = new BufferedWriter(fr);
+
+            bw.write("ERROR on the program logic's. Message: " + e.getMessage());
+            bw.close();
+        }
 
     }
 
+    private static void StartApplication(){
+        permutations = new ArrayList<int[]>();
+        Paths = new HashMap<int[],Double>();
+        cities = new ArrayList<City>();
+        regexCities = Pattern.compile("(?<cityName>[\\w\\s]*)\\s*,\\s*(?<countryName>[\\w\\s]*)\\s*,\\s*(?<latitude>[\\d]*.[\\d]*\\s\\w)\\s*,\\s*(?<longitude>[\\d]*.[\\d]*\\s\\w)\\s*\\n*", Pattern.CASE_INSENSITIVE);
+    }
+
     /** 
-     * @returns the adjacency matrix equivalent to the "graph".
+     * @returns The adjacency matrix equivalent to the "graph".
      */
     public static double[][] GetAdjacencyMatrix(){
         int vertices = cities.size();
@@ -70,9 +92,8 @@ public class App {
         for (int from = 0; from < vertices; from++){
             for (int to = 0; to < vertices; to++){
 
-                if (from == to){
-                    matrix[from][to] = 0;
-                } else {
+                if (from == to){ matrix[from][to] = 0; } 
+                else {
                     matrix[from][to] = CoordinatesHandle.CalculateDistances(
                         cities.get(from).getLatitude(), 
                         cities.get(from).getLongitude(), 
@@ -80,54 +101,52 @@ public class App {
                         cities.get(to).getLongitude()
                     );
                 }
-
             }
         }
-
         return matrix;
     }
 
-    public static void CalculateShortestDistance(){
-        int[] shortestDistance = new int[cities.size()];
+    /**
+     * Calculates the shortest Path for all cities, using different methods.
+     */
+    public static void CalculateShortestPath(){
 
-        shortestDistance = GetShortestByBruteForce();
-        // shortestDistance = GetShortestByDynamicProgramming();
+        Map.Entry<int[], Double> shortestPath = CommonFunctions.GetShortestByBruteForce(cities, graph, permutations);
+        ShowShortestPath(shortestPath, Methods.BruteForce);
 
-        // shortestDistance = GetShortestByDivideAndConquer(); 
-        // or
-        // shortestDistance = GetShortestByGuloso(); 
+        // shortestPath = CommonFunctions.GetShortestByDynamicProgramming(cities, graph, permutations);
+        // ShowShortestPath(shortestPath, Methods.DynamicProgramming);
+
+        // shortestPath = CommonFunctions.GetShortestByDivideAndConquer(cities, graph, permutations); 
+        // ShowShortestPath(shortestPath, Methods.DivideAndConquer);
 
     }
 
-    public static int[] GetShortestByBruteForce(){
-        int[] shortestDistance = new int[cities.size()];
-
-        List<Integer> a = new ArrayList<Integer>();
-        cities.forEach(city -> a.add(city.getId()));
-        
-
-        permute(a,0);
-
-        Map<int[],Double> distances = new HashMap<int[],Double>();
-        
-        for (int i = 0; i < permutations.size(); i++){
-            double distance = CoordinatesHandle.GetDistanceBetweenPermutation(permutations.get(i), graph);
-            distances.put(permutations.get(i), distance);
+    /**
+     * Prints the shortest path between cities with different methods.
+     * 
+     * @param shortest The <Key, Value> pair. They represent the permutation with the shortest path, 
+     * and the distance in Km;
+     * @param method The method used fo get the shortest distance.
+     */
+    public static void ShowShortestPath(Map.Entry<int[], Double> shortest, Methods method){
+        switch (method) {
+            case BruteForce:
+                System.out.println("Checking statistics for using 'Brute Force':");
+            case DynamicProgramming:
+                System.out.println("Checking statistics for using 'Dynamic Programming':");
+            case DivideAndConquer:
+                System.out.println("Checking statistics for using 'Divide and Conquer':");
         }
-
-        // shortest will be min of distances
-        return shortestDistance;
-    }    
-
-    static void permute(List<Integer> arr, int k){
-        for(int i = k; i < arr.size(); i++){
-            Collections.swap(arr, i, k);
-            permute(arr, k+1);
-            Collections.swap(arr, k, i);
+        System.out.println();
+        System.out.println("The shortest path between the cities is " + Double.valueOf(new DecimalFormat("#.##").format(shortest.getValue())) + " km.");
+        System.out.println("The order of cities you'll need to pass is: ");
+        for (int i = 0; i < cities.size(); i++){
+            System.out.print(cities.get(shortest.getKey()[i]).getCityName() + " -> ");
         }
-        if (k == arr.size() -1){
-            permutations.add(arr.stream().mapToInt(i->i).toArray());
-            System.out.println(Arrays.toString(arr.toArray()));
-        }
-    } 
+        System.out.println();
+
+        System.out.println("ATENTION: You don't need to start with the same city as told. Just follow the SEQUENCE of cities (ordered or mirrored). ");
+    }
+
 }
