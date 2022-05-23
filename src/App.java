@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class App {
@@ -31,29 +30,30 @@ public class App {
         try {
             StartApplication();
             
-            File citiesFile = new File("files/citiesTest2.txt");
+            File citiesFile = new File("files/cities.txt");
 
             FileReader fr = new FileReader(citiesFile);
             BufferedReader br = new BufferedReader(fr);
 
             //Read header;
             String line = br.readLine();
+
             // Read first value;
             line = br.readLine();
 
-            int id = 0;
+            int id = 1;
+            int index = 0;
             while (line != null){
-                Matcher m = regexCities.matcher(line);
 
-                if (m.matches()){
-                    cities.add(new City(id, m.group("cityName"), m.group("countryName"), m.group("latitude"), m.group("longitude")));
-                } else {
-                    String[] values = line.split(",");
-                    System.out.println("Not able to register city " + values[0]);
-                }
-            
+                String[] coordinates = line.split(" ");
+
+                Double lat = Double.parseDouble(coordinates[0]);
+                Double lon = Double.parseDouble(coordinates[1]);
+
+                cities.add(new City(id, index, lat, lon));
                 line = br.readLine();
                 id++;
+                index++;
             }
 
             br.close();
@@ -78,7 +78,6 @@ public class App {
         permutations = new ArrayList<int[]>();
         Paths = new HashMap<int[],Double>();
         cities = new ArrayList<City>();
-        regexCities = Pattern.compile("(?<cityName>[\\w\\s]*)\\s*,\\s*(?<countryName>[\\w\\s]*)\\s*,\\s*(?<latitude>[\\d]*.[\\d]*\\s\\w)\\s*,\\s*(?<longitude>[\\d]*.[\\d]*\\s\\w)\\s*\\n*", Pattern.CASE_INSENSITIVE);
     }
 
     /** 
@@ -95,10 +94,10 @@ public class App {
                 if (from == to){ matrix[from][to] = 0; } 
                 else {
                     matrix[from][to] = CoordinatesHandle.CalculateDistances(
-                        cities.get(from).getLatitude(), 
-                        cities.get(from).getLongitude(), 
-                        cities.get(to).getLatitude(), 
-                        cities.get(to).getLongitude()
+                        cities.get(from).getX(), 
+                        cities.get(from).getY(), 
+                        cities.get(to).getX(), 
+                        cities.get(to).getY()
                     );
                 }
             }
@@ -108,8 +107,9 @@ public class App {
 
     /**
      * Calculates the shortest Path for all cities, using different methods.
+     * @throws IOException
      */
-    public static void CalculateShortestPath(){
+    public static void CalculateShortestPath() throws IOException{
 
         Map.Entry<int[], Double> shortestPath = CommonFunctions.GetShortestByBruteForce(cities, graph, permutations);
         ShowShortestPath(shortestPath, Methods.BruteForce);
@@ -128,25 +128,35 @@ public class App {
      * @param shortest The <Key, Value> pair. They represent the permutation with the shortest path, 
      * and the distance in Km;
      * @param method The method used fo get the shortest distance.
+     * @throws IOException
      */
-    public static void ShowShortestPath(Map.Entry<int[], Double> shortest, Methods method){
-        switch (method) {
-            case BruteForce:
-                System.out.println("Checking statistics for using 'Brute Force':");
-            case DynamicProgramming:
-                System.out.println("Checking statistics for using 'Dynamic Programming':");
-            case DivideAndConquer:
-                System.out.println("Checking statistics for using 'Divide and Conquer':");
-        }
-        System.out.println();
-        System.out.println("The shortest path between the cities is " + Double.valueOf(new DecimalFormat("#.##").format(shortest.getValue())) + " km.");
-        System.out.println("The order of cities you'll need to pass is: ");
-        for (int i = 0; i < cities.size(); i++){
-            System.out.print(cities.get(shortest.getKey()[i]).getCityName() + " -> ");
-        }
-        System.out.println();
+    public static void ShowShortestPath(Map.Entry<int[], Double> shortest, Methods method) throws IOException{
+        String shortestPath = "";
 
-        System.out.println("ATENTION: You don't need to start with the same city as told. Just follow the SEQUENCE of cities (ordered or mirrored). ");
+        File statisticsFile = new File("statistics.txt");
+        FileWriter fr = new FileWriter(statisticsFile);
+        BufferedWriter bw = new BufferedWriter(fr);
+
+        if (method.name() == "BruteForce"){
+            bw.write("Checking statistics for using 'Brute Force':\n");
+        } else if (method.name() == "BruteForce"){
+            bw.write("Checking statistics for using 'Dynamic Programming':\n");
+        } else if (method.name() == "BruteForce"){
+            bw.write("Checking statistics for using 'Divide and Conquer':\n");
+        }
+
+        String path = shortest.getValue().toString();
+        path = path.substring(0, (path.indexOf(".")) + 3);
+
+        bw.write("The shortest path between the cities is " + path + "\n");
+
+        for (int i = 0; i < cities.size(); i++){
+            shortestPath += cities.get(shortest.getKey()[i]).getId() + " -> ";
+        }
+        bw.write("The order of cities you'll need to pass is: " + shortestPath);
+        bw.write("\n\n");
+                
+        bw.close();
     }
 
 }

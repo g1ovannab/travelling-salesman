@@ -41,10 +41,10 @@ public class CommonFunctions {
         int[] shortestPathPermutation = new int[cities.size()];
         double shortestPath = Double.MAX_VALUE;
         
-        List<Integer> idOfCitiesToPermute = new ArrayList<Integer>();
-        cities.forEach(city -> idOfCitiesToPermute.add(city.getId()));
+        List<Integer> indexOfCitiesToPermute = new ArrayList<Integer>();
+        cities.forEach(city -> indexOfCitiesToPermute.add(city.getIndex()));
         
-        CommonFunctions.PermuteCities(idOfCitiesToPermute,0, permutations);
+        CommonFunctions.PermuteCities(indexOfCitiesToPermute,0, permutations);
         
         for (int i = 0; i < permutations.size(); i++){
             double distanceOfPermutation = CoordinatesHandle.GetDistanceBetweenPermutation(permutations.get(i), graph);

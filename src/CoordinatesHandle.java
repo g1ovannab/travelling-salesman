@@ -3,34 +3,9 @@ public class CoordinatesHandle {
     
     public static CoordinatesHandle getCH(){ return ch; }
     private CoordinatesHandle(){}
-    
-    public final static double earthRadius = 6371; // Kilometers.
-    
-    /**
-     * Calculates the distance from one city to other, based on the coordinates from each city.
-     * 
-     * @param latitudeFrom Latitude of the city we are leaving from;
-     * @param longitudeFrom Longitude of || ;
-     * 
-     * @param latitudeTo Latitude of the city we are going to;
-     * @param longitudeTo Longitude of || ;
-     * @returns The distance in kilometers.
-     */
-    public static double CalculateDistances(double latitudeFrom, double longitudeFrom, double latitudeTo, double longitudeTo){
-        double distanceLatitude = Math.toRadians(latitudeTo-latitudeFrom);
-        double distanceLongitude = Math.toRadians(longitudeTo-longitudeFrom);
-
-        latitudeFrom = Math.toRadians(latitudeFrom);
-        latitudeTo = Math.toRadians(latitudeTo);
-
-        // Square of half the chord length between the points;
-        double a = Math.sin(distanceLatitude/2) * Math.sin(distanceLatitude/2) + 
-        Math.sin(distanceLongitude/2) * Math.sin(distanceLongitude/2) * Math.cos(latitudeFrom) * Math.cos(latitudeTo);
         
-        // Angular distance in radians;
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-        return (earthRadius * c);
+    public static double CalculateDistances(double xFrom, double yFrom, double xTo, double yTo){
+        return Math.sqrt((Math.pow((xFrom - xTo), 2)) + (Math.pow((yFrom - yTo), 2)));
     }
 
     /**

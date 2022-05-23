@@ -1,6 +1,0 @@
-City,Country,Latitude,Longitude
-Rutland, USA,43.6106 N, 72.9726 W
-Burlington, USA,44.4759 N, 73.2121 W
-White River, USA,43.6490 N, 72.3193 W 
-Bennington,USA,42.8781 N, 73.1968 W
-Brattleboro, USA,42.8509 N, 72.5579 W

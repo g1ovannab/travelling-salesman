@@ -1,17 +1,6 @@
-City,Country,Latitude,Longitude
-Moscow,Russia,55.7558 N,37.6173 E
-New York,USA,40.7128 N,74.0060 W
-Mallorca,Spain,39.6953 N,3.0176 E
-Seoul,South Korea,37.5665 N,126.9780 E
-Valletta,Malta,35.8989 N,14.5146 E
-Tokyo,Japan,35.6762 N,139.6503 E
-Dubai,United Arab Emirates,25.2048 N,55.2708 E,
-Bogotá,Colombia,4.7110 N, 74.0721 W
-Fernando de Noronha,Brazil,3.8426 S, 32.4106 W
-Jakarta,Indonesia,6.2088 S, 106.8456 E
-Bora Bora,French Polynesia,16.5004 S, 151.7415 W
-Belo Horizonte,Brazil,19.9191 S, 43.9387 W
-Santiago,Chile,33.4489 S, 70.6693 W
-Cape Town,South Africa,33.9249 S, 18.4241 E
-Buenos Aires,Argentina,34.6037 S, 58.3816 W
-Melbourne,Australia,37.8136 S, 144.9631 E
+5
+43.6 72.9
+44.4 73.2
+43.64 72.3
+42.8 73.1
+42.8 72.5
