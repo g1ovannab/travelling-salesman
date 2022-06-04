@@ -69,7 +69,7 @@ public class App {
             }
 
         } catch (Exception e) {
-            File citiesFile = new File("error.txt");
+            File citiesFile = new File("files/error.txt");
 
             FileWriter fr = new FileWriter(citiesFile, true);
             BufferedWriter bw = new BufferedWriter(fr);
@@ -164,7 +164,7 @@ public class App {
     public static void ShowShortestPath(Map.Entry<int[], Double> shortest, Methods method, long time) throws IOException{
         String shortestPath = "";
 
-        File statisticsFile = new File("statistics.txt");
+        File statisticsFile = new File("files/statistics.txt");
         FileWriter fr = new FileWriter(statisticsFile, true);
         BufferedWriter bw = new BufferedWriter(fr);
 
