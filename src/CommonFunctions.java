@@ -25,7 +25,7 @@ public class CommonFunctions {
             Collections.swap(ids, k, i);
         }
 
-        if (k == ids.size() -1){ permutations.add(ids.stream().mapToInt(i->i).toArray()); }
+        if (k == ids.size() -1 && ids.get(0) == 0) permutations.add(ids.stream().mapToInt(i->i).toArray());
     } 
 
     /**
@@ -122,7 +122,38 @@ public class CommonFunctions {
     }
 
 
-    public static Map.Entry<int[], Double> GetShortestByDivideAndConquer(List<City> cities, double[][] graph, List<int[]> permutations){
-        return null;
+    public static Map.Entry<int[], Double> GetShortestByGreedy(List<City> cities, double[][] graph){
+        
+        List<Integer> path = new ArrayList<>();
+        int size = cities.size();
+        
+		double totalDistance = 0;
+		int currentCity = 0;
+		path.add(currentCity);
+		int nearestCity = currentCity;
+		double minimumDistance = Double.MAX_VALUE;
+
+		while(path.size() < size) {
+			
+            for(int i = 0; i < size; i++) {
+				if(i != currentCity && !path.contains(i)) {//se nao e a cidade atual, nao adiciona no path
+					if(graph[currentCity][i] < minimumDistance) {//pega a cidade mais proxima
+						minimumDistance = graph[currentCity][i];
+						nearestCity = i;
+					}
+				}
+			}
+
+			path.add(nearestCity);
+			totalDistance += minimumDistance;
+			currentCity = nearestCity;
+			minimumDistance = Double.MAX_VALUE;
+		}
+
+		totalDistance += graph[path.get(path.size() - 1)][0];
+        int[] shortestPath = path.stream().mapToInt(Integer::intValue).toArray(); 
+
+        return new AbstractMap.SimpleEntry<int[], Double>(shortestPath, totalDistance);
+
     }
 }

@@ -9,24 +9,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class App {
 
     public static ArrayList<City> cities;
     public static double[][] graph;
-    public static Pattern regexCities;
 
     /* Brute Force */
     public static List<int[]> permutations;
-
     /* Dynamic Programming */
     public static List<Integer> pathDP;
-
-    public static Map<int[],Double> Paths;
 
     public enum Methods{
         BruteForce, DynamicProgramming, DivideAndConquer
@@ -66,13 +60,13 @@ public class App {
 
             br.close();
 
-            // if n <= 2 nao value
-            // if n != distancia[0] nao value
-            // if starts < 0 ||start >= n nao vale
-
-            graph = GetAdjacencyMatrix();
-        
-            CalculateShortestPath();
+            if (cities.size() <= 2){
+                throw new IllegalArgumentException("Number of cities cannot be equal or under 2.");
+            } else {
+                graph = GetAdjacencyMatrix();
+            
+                CalculateShortestPath();
+            }
 
         } catch (Exception e) {
             File citiesFile = new File("error.txt");
@@ -94,14 +88,17 @@ public class App {
 
     private static void StartApplication(){
         permutations = new ArrayList<int[]>();
-        Paths = new HashMap<int[],Double>();
         cities = new ArrayList<City>();
         pathDP = new ArrayList<Integer>();
     }
 
     private static void DeleteStatistics(){
-        File statisticsFile = new File("statistics.txt");
-        if (statisticsFile.exists()) statisticsFile.delete();
+        try {
+            File statisticsFile = new File("statistics.txt");
+            if (statisticsFile.exists()) statisticsFile.delete();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     /** 
@@ -151,7 +148,7 @@ public class App {
 
         /* Divide And Conquer */
         start = System.currentTimeMillis();
-        shortestPath = CommonFunctions.GetShortestByDivideAndConquer(cities, graph, permutations); 
+        shortestPath = CommonFunctions.GetShortestByGreedy(cities, graph); 
         finish = System.currentTimeMillis();
         ShowShortestPath(shortestPath, Methods.DivideAndConquer, finish - start);
     }
@@ -181,7 +178,7 @@ public class App {
             bw.write("Divide and Conquer':\n");
         }
 
-        bw.write("\tTime spent: " + time + " milliseconds.\n\n");
+        bw.write("\tTime spent for " + cities.size()+ " cities: " + time + " milliseconds.\n\n");
 
         String path = shortest.getValue().toString();
         path = path.substring(0, (path.indexOf(".")) + 3);
