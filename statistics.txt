@@ -1,0 +1,12 @@
+Checking statistics for using 'Brute Force':
+	Time spent: 0 seconds.
+
+The shortest path between the cities is 4.32
+The order of cities you'll need to pass is: 1 -> 2 -> 3 -> 5 -> 4 -> 1
+
+Checking statistics for using 'Dynamic Programming':
+	Time spent: 2 seconds.
+
+The shortest path between the cities is 4.32
+The order of cities you'll need to pass is: 1 -> 2 -> 3 -> 5 -> 4 -> 1
+

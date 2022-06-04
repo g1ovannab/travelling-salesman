@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +20,12 @@ public class App {
     public static double[][] graph;
     public static Pattern regexCities;
 
+    /* Brute Force */
     public static List<int[]> permutations;
+
+    /* Dynamic Programming */
+    public static List<Integer> pathDP;
+
     public static Map<int[],Double> Paths;
 
     public enum Methods{
@@ -28,6 +35,7 @@ public class App {
     public static void main(String[] args) throws IOException,FileNotFoundException  {
 
         try {
+            DeleteStatistics();
             StartApplication();
             
             File citiesFile = new File("files/cities.txt");
@@ -58,6 +66,10 @@ public class App {
 
             br.close();
 
+            // if n <= 2 nao value
+            // if n != distancia[0] nao value
+            // if starts < 0 ||start >= n nao vale
+
             graph = GetAdjacencyMatrix();
         
             CalculateShortestPath();
@@ -65,10 +77,16 @@ public class App {
         } catch (Exception e) {
             File citiesFile = new File("error.txt");
 
-            FileWriter fr = new FileWriter(citiesFile);
+            FileWriter fr = new FileWriter(citiesFile, true);
             BufferedWriter bw = new BufferedWriter(fr);
+            
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            System.out.println(dtf.format(now));
+            bw.write("[" + dtf.format(now) + "]: ");
 
-            bw.write("ERROR on the program logic's. Message: " + e.getMessage());
+
+            bw.write("ERROR on the program logic's. Message: " + e.getMessage() + "\n");
             bw.close();
         }
 
@@ -78,6 +96,12 @@ public class App {
         permutations = new ArrayList<int[]>();
         Paths = new HashMap<int[],Double>();
         cities = new ArrayList<City>();
+        pathDP = new ArrayList<Integer>();
+    }
+
+    private static void DeleteStatistics(){
+        File statisticsFile = new File("statistics.txt");
+        if (statisticsFile.exists()) statisticsFile.delete();
     }
 
     /** 
@@ -110,16 +134,26 @@ public class App {
      * @throws IOException
      */
     public static void CalculateShortestPath() throws IOException{
+        long start, finish;        
+        Map.Entry<int[], Double> shortestPath = new AbstractMap.SimpleEntry<int[], Double>(null, null);
 
-        Map.Entry<int[], Double> shortestPath = CommonFunctions.GetShortestByBruteForce(cities, graph, permutations);
-        ShowShortestPath(shortestPath, Methods.BruteForce);
+        /* Brute Force */
+        start = System.currentTimeMillis();
+        shortestPath = CommonFunctions.GetShortestByBruteForce(cities, graph, permutations);
+        finish = System.currentTimeMillis();
+        ShowShortestPath(shortestPath, Methods.BruteForce, finish - start);
 
-        // shortestPath = CommonFunctions.GetShortestByDynamicProgramming(cities, graph, permutations);
-        // ShowShortestPath(shortestPath, Methods.DynamicProgramming);
+        /* Dynamic Programming */
+        start = System.currentTimeMillis();
+        shortestPath = CommonFunctions.GetShortestByDynamicProgramming(cities, graph, pathDP);
+        finish = System.currentTimeMillis();
+        ShowShortestPath(shortestPath, Methods.DynamicProgramming, finish - start);
 
-        // shortestPath = CommonFunctions.GetShortestByDivideAndConquer(cities, graph, permutations); 
-        // ShowShortestPath(shortestPath, Methods.DivideAndConquer);
-
+        /* Divide And Conquer */
+        start = System.currentTimeMillis();
+        shortestPath = CommonFunctions.GetShortestByDivideAndConquer(cities, graph, permutations); 
+        finish = System.currentTimeMillis();
+        ShowShortestPath(shortestPath, Methods.DivideAndConquer, finish - start);
     }
 
     /**
@@ -130,20 +164,24 @@ public class App {
      * @param method The method used fo get the shortest distance.
      * @throws IOException
      */
-    public static void ShowShortestPath(Map.Entry<int[], Double> shortest, Methods method) throws IOException{
+    public static void ShowShortestPath(Map.Entry<int[], Double> shortest, Methods method, long time) throws IOException{
         String shortestPath = "";
 
         File statisticsFile = new File("statistics.txt");
-        FileWriter fr = new FileWriter(statisticsFile);
+        FileWriter fr = new FileWriter(statisticsFile, true);
         BufferedWriter bw = new BufferedWriter(fr);
 
+        bw.write("Checking statistics for using '");
+
         if (method.name() == "BruteForce"){
-            bw.write("Checking statistics for using 'Brute Force':\n");
-        } else if (method.name() == "BruteForce"){
-            bw.write("Checking statistics for using 'Dynamic Programming':\n");
-        } else if (method.name() == "BruteForce"){
-            bw.write("Checking statistics for using 'Divide and Conquer':\n");
+            bw.write("Brute Force':\n");
+        } else if (method.name() == "DynamicProgramming"){
+            bw.write("Dynamic Programming':\n");
+        } else if (method.name() == "DivideAndConquer"){
+            bw.write("Divide and Conquer':\n");
         }
+
+        bw.write("\tTime spent: " + time + " milliseconds.\n\n");
 
         String path = shortest.getValue().toString();
         path = path.substring(0, (path.indexOf(".")) + 3);
@@ -153,7 +191,9 @@ public class App {
         for (int i = 0; i < cities.size(); i++){
             shortestPath += cities.get(shortest.getKey()[i]).getId() + " -> ";
         }
-        bw.write("The order of cities you'll need to pass is: " + shortestPath);
+        shortestPath += cities.get(shortest.getKey()[0]).getId();
+
+        bw.write("The order of cities you'll need to pass is: " + shortestPath + "\n");
         bw.write("\n\n");
                 
         bw.close();
