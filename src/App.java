@@ -11,6 +11,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class App {
 
@@ -29,10 +30,26 @@ public class App {
     public static void main(String[] args) throws IOException,FileNotFoundException  {
 
         try {
-            DeleteStatistics();
+            DeleteFiles();
             StartApplication();
+
             
-            File citiesFile = new File("files/cities.txt");
+            File citiesFile;
+
+            /* This part of code must be commented. The code is registered for 
+            reasons of internal tests for the accomplishment of the report. */
+            Boolean runTest = true;
+
+            if (runTest) {
+                int numberOfCities = 12;
+                citiesFile = new File("files/citiesTest.txt");
+                RunTests(citiesFile, numberOfCities);
+
+            } else {
+                citiesFile = new File("files/cities.txt");
+            }
+            /* End of test. */
+
 
             FileReader fr = new FileReader(citiesFile);
             BufferedReader br = new BufferedReader(fr);
@@ -63,8 +80,10 @@ public class App {
             if (cities.size() <= 2){
                 throw new IllegalArgumentException("Number of cities cannot be equal or under 2.");
             } else {
+                System.out.println("Getting adjacency matrix...");
                 graph = GetAdjacencyMatrix();
-            
+
+                System.out.println("Calculating shortest path...");
                 CalculateShortestPath();
             }
 
@@ -86,16 +105,44 @@ public class App {
 
     }
 
+    private static void RunTests(File cities, int n) throws IOException{
+        Random random = new Random();
+        
+        double x, y;
+
+        int min = 0, max = 10000;
+
+        FileWriter fw = new FileWriter(cities, true);
+        BufferedWriter bw = new BufferedWriter(fw);
+
+        bw.write(n + "\n");
+        
+        for (int i = 1; i <= n; i++){
+            // pra cada cidade gerar dois numeros de 0 a 1000
+            x = (random.nextInt(max - min + 1) + min) / 10.0;
+            y = (random.nextInt(max - min + 1) + min) / 10.0;
+
+            bw.write(x + " " + y);
+            if (i != n) bw.write("\n");
+        }
+
+        bw.close();
+    }
+
     private static void StartApplication(){
         permutations = new ArrayList<int[]>();
         cities = new ArrayList<City>();
         pathDP = new ArrayList<Integer>();
     }
 
-    private static void DeleteStatistics(){
+    private static void DeleteFiles(){
         try {
-            File statisticsFile = new File("statistics.txt");
+            File statisticsFile = new File("files/statistics.txt");
             if (statisticsFile.exists()) statisticsFile.delete();
+
+            File testsFile = new File("files/citiesTest.txt");
+            if (testsFile.exists()) testsFile.delete();
+
         } catch (Exception e) {
             throw e;
         }
@@ -135,18 +182,21 @@ public class App {
         Map.Entry<int[], Double> shortestPath = new AbstractMap.SimpleEntry<int[], Double>(null, null);
 
         /* Brute Force */
+        System.out.println("Getting shortest by BF...");
         start = System.currentTimeMillis();
         shortestPath = CommonFunctions.GetShortestByBruteForce(cities, graph, permutations);
         finish = System.currentTimeMillis();
         ShowShortestPath(shortestPath, Methods.BruteForce, finish - start);
 
         /* Dynamic Programming */
+        System.out.println("Getting shortest by DP...");
         start = System.currentTimeMillis();
         shortestPath = CommonFunctions.GetShortestByDynamicProgramming(cities, graph, pathDP);
         finish = System.currentTimeMillis();
         ShowShortestPath(shortestPath, Methods.DynamicProgramming, finish - start);
 
         /* Divide And Conquer */
+        System.out.println("Getting shortest by DC...");
         start = System.currentTimeMillis();
         shortestPath = CommonFunctions.GetShortestByGreedy(cities, graph); 
         finish = System.currentTimeMillis();
