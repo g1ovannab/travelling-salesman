@@ -24,7 +24,7 @@ public class App {
     public static List<Integer> pathDP;
 
     public enum Methods{
-        BruteForce, DynamicProgramming, DivideAndConquer
+        BruteForce, DynamicProgramming, Greedy
     }
     
     public static void main(String[] args) throws IOException,FileNotFoundException  {
@@ -196,11 +196,11 @@ public class App {
         ShowShortestPath(shortestPath, Methods.DynamicProgramming, finish - start);
 
         /* Divide And Conquer */
-        System.out.println("Getting shortest by DC...");
+        System.out.println("Getting shortest by G...");
         start = System.currentTimeMillis();
         shortestPath = CommonFunctions.GetShortestByGreedy(cities, graph); 
         finish = System.currentTimeMillis();
-        ShowShortestPath(shortestPath, Methods.DivideAndConquer, finish - start);
+        ShowShortestPath(shortestPath, Methods.Greedy, finish - start);
     }
 
     /**
@@ -224,8 +224,8 @@ public class App {
             bw.write("Brute Force':\n");
         } else if (method.name() == "DynamicProgramming"){
             bw.write("Dynamic Programming':\n");
-        } else if (method.name() == "DivideAndConquer"){
-            bw.write("Divide and Conquer':\n");
+        } else if (method.name() == "Greedy"){
+            bw.write("Greedy':\n");
         }
 
         bw.write("\tTime spent for " + cities.size()+ " cities: " + time + " milliseconds.\n\n");

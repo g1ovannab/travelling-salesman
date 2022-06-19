@@ -1,18 +1,14 @@
-## Getting Started
+# TSP
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+In order to run the program, you need to have the JDK 11 installed.
 
-## Folder Structure
 
-The workspace contains two folders by default, where:
+## Files Structure
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+You need to create the file `cities.txt` in the folder /files with the coordinates of the cities you want to calculate.
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+If you don't want to write any numbers, you need to set the variable 'runTest' to true, and set a number of cities in the variable 'numberOfCities'.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+The results will be placed also in the folder /files, in a text file called `statistics.txt`.
 
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+If the program returns any error, the error will be written in the file `error.txt`.
